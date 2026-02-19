@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Nano Gummy</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.quiz-shell {
+  background: #1B3A2F;
+  border-radius: 16px;
+  padding: 36px 32px 32px;
+  max-width: 560px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.quiz-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8FBE9F;
+  margin: 0 0 10px;
+}
+
+.quiz-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  margin: 0 0 6px;
+}
+
+.quiz-sub {
+  font-size: 14px;
+  color: #A8C4B0;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+/* Progress bar */
+.progress-track {
+  background: rgba(255,255,255,0.12);
+  border-radius: 99px;
+  height: 4px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 4px;
+  background: #8FBE9F;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* Step label */
+.step-label {
+  font-size: 12px;
+  color: #8FBE9F;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+/* Question */
+.question-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0 0 20px;
+}
+
+/* Answer options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 15px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.option-btn:hover {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.35);
+  transform: translateY(-1px);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+}
+
+.option-btn.selected {
+  background: rgba(143, 190, 159, 0.18);
+  border-color: #8FBE9F;
+}
+
+.option-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.option-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.option-hint {
+  font-size: 12px;
+  color: #A8C4B0;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Result card */
+.result-card {
+  display: none;
+}
+
+.result-card.visible {
+  display: block;
+}
+
+.result-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1B3A2F;
+  background: #8FBE9F;
+  border-radius: 99px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
+
+.result-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.result-desc {
+  font-size: 14px;
+  color: #A8C4B0;
+  line-height: 1.6;
+  margin: 0 0 22px;
+}
+
+.result-detail {
+  background: rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 22px;
+  display: flex;
+  gap: 20px;
+}
+
+.result-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.result-stat-label {
+  font-size: 11px;
+  color: #8FBE9F;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.cta-btn {
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  color: #1B3A2F;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+  letter-spacing: 0.01em;
+}
+
+.cta-btn:hover {
+  background: #f0f7f3;
+  transform: translateY(-1px);
+}
+
+.restart-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  color: #8FBE9F;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  margin-top: 8px;
+  letter-spacing: 0.03em;
+  transition: color 0.15s ease;
+}
+
+.restart-btn:hover {
+  color: #ffffff;
+}
+
+/* Slide transition */
+.slide {
+  animation: fadeUp 0.3s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .quiz-shell {
+    padding: 28px 20px 24px;
+    border-radius: 12px;
+  }
+  .quiz-heading { font-size: 19px; }
+  .question-text { font-size: 16px; }
+  .result-name { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="quiz-shell">
+
+  <!-- Progress bar -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+  </div>
+
+  <!-- Questions -->
+  <div id="quizSteps"></div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-badge">Your match</div>
+    <div class="result-name" id="resultName"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-detail" id="resultDetail"></div>
+    <a href="#" class="cta-btn" id="resultCta" target="_blank" rel="noopener"></a>
+    <button class="restart-btn" id="restartBtn">&#8592; Start over</button>
+  </div>
+
+</div>
+
+<script>
+(function () {
+
+  var questions = [
+    {
+      step: "Question 1 of 2",
+      text: "How would you describe your experience with edibles?",
+      options: [
+        { icon: "🌱", label: "Brand new",       hint: "I have never tried an edible before",          value: "new"  },
+        { icon: "🌿", label: "Some experience", hint: "I have tried a few, still finding my footing", value: "some" },
+        { icon: "🍃", label: "Well seasoned",   hint: "Edibles are a regular part of my routine",     value: "exp"  }
+      ]
+    },
+    {
+      step: "Question 2 of 2",
+      text: "What kind of experience are you looking for tonight?",
+      options: [
+        { icon: "✨", label: "Light and easy",    hint: "Something gentle I can ease into",         value: "light"  },
+        { icon: "⚖️", label: "Balanced",          hint: "Noticeable but still in control",          value: "mid"    },
+        { icon: "🚀", label: "The full effect",   hint: "I know what I want and I want more of it", value: "full"   }
+      ]
+    }
+  ];
+
+  var results = {
+    "micro": {
+      name: "Micro-Dose Delta-9 THC Gummies",
+      desc: "Perfect for easing in. A smaller serving size gives you total control over your experience, so you can find your sweet spot without overdoing it.",
+      stats: [ { value: "1mg",      label: "Delta-9 per piece" }, { value: "30-count", label: "Per pack" }, { value: "$65",    label: "Per pack" } ],
+      cta: "Grab a 30-count for $65",
+      url: "https://mood.com/product/micro-dose-delta-9-thc-gummies"
+    },
+    "rapid": {
+      name: "Rapid Onset Delta-9 THC Gummies",
+      desc: "The ideal starting point for most people making the switch to fast-acting. You will feel it in 15 to 30 minutes, with a clear 2 to 4 hour window.",
+      stats: [ { value: "7.5mg",    label: "Delta-9 per gummy" }, { value: "5–15 min", label: "Onset time" }, { value: "$29",    label: "Per 10-count" } ],
+      cta: "Grab a 10-count for $29",
+      url: "https://mood.com/product/rapid-onset-delta-9-thc-gummies"
+    },
+    "hero": {
+      name: "Hero Dose Rapid Onset THC Gummies",
+      desc: "Built for experienced users who know their baseline and want to turn things up. Fast-acting, full-spectrum, and ready when you are.",
+      stats: [ { value: "Full spec", label: "Cannabinoid blend" }, { value: "5–15 min", label: "Onset time" }, { value: "$39",    label: "Per 10-count" } ],
+      cta: "Grab a 10-count for $39",
+      url: "https://mood.com/product/hero-dose-rapid-onset-thc-gummies"
+    }
+  };
+
+  var answers = [];
+  var currentStep = 0;
+
+  function getResult(ans) {
+    var exp  = ans[0];
+    var want = ans[1];
+    if (exp === "new"  && want === "light")  return "micro";
+    if (exp === "new"  && want === "mid")    return "micro";
+    if (exp === "new"  && want === "full")   return "rapid";
+    if (exp === "some" && want === "light")  return "micro";
+    if (exp === "some" && want === "mid")    return "rapid";
+    if (exp === "some" && want === "full")   return "rapid";
+    if (exp === "exp"  && want === "light")  return "rapid";
+    if (exp === "exp"  && want === "mid")    return "rapid";
+    if (exp === "exp"  && want === "full")   return "hero";
+    return "rapid";
+  }
+
+  function renderQuestion(idx) {
+    var q = questions[idx];
+    var stepsEl = document.getElementById("quizSteps");
+    var progress = ((idx) / questions.length) * 100;
+    document.getElementById("progressFill").style.width = progress + "%";
+
+    var html = '<div class="slide">';
+    html += '<div class="quiz-eyebrow">Find your match</div>';
+    if (idx === 0) {
+      html += '<div class="quiz-heading">Which nano gummy is right for you?</div>';
+      html += '<div class="quiz-sub">Two quick questions. That is all it takes.</div>';
+    }
+    html += '<div class="step-label">' + q.step + '</div>';
+    html += '<div class="question-text">' + q.text + '</div>';
+    html += '<div class="options">';
+    q.options.forEach(function (opt) {
+      html += '<button class="option-btn" data-value="' + opt.value + '">';
+      html += '<span class="option-icon">' + opt.icon + '</span>';
+      html += '<span class="option-text-wrap">';
+      html += '<span class="option-label">' + opt.label + '</span>';
+      html += '<span class="option-hint">' + opt.hint + '</span>';
+      html += '</span>';
+      html += '</button>';
+    });
+    html += '</div></div>';
+
+    stepsEl.innerHTML = html;
+
+    // Bind option clicks
+    stepsEl.querySelectorAll(".option-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        // Visual feedback before advancing
+        stepsEl.querySelectorAll(".option-btn").forEach(function (b) { b.classList.remove("selected"); });
+        btn.classList.add("selected");
+
+        var val = btn.getAttribute("data-value");
+        answers.push(val);
+
+        setTimeout(function () {
+          if (currentStep < questions.length - 1) {
+            currentStep++;
+            renderQuestion(currentStep);
+          } else {
+            showResult();
+          }
+        }, 280);
+      });
+    });
+  }
+
+  function showResult() {
+    document.getElementById("quizSteps").innerHTML = "";
+    document.getElementById("progressFill").style.width = "100%";
+
+    var key = getResult(answers);
+    var r   = results[key];
+
+    document.getElementById("resultName").textContent = r.name;
+    document.getElementById("resultDesc").textContent = r.desc;
+
+    var detailHtml = "";
+    r.stats.forEach(function (s) {
+      detailHtml += '<div class="result-stat">';
+      detailHtml += '<span class="result-stat-value">' + s.value + '</span>';
+      detailHtml += '<span class="result-stat-label">' + s.label + '</span>';
+      detailHtml += '</div>';
+    });
+    document.getElementById("resultDetail").innerHTML = detailHtml;
+
+    var ctaEl = document.getElementById("resultCta");
+    ctaEl.textContent = r.cta;
+    ctaEl.href = r.url;
+
+    var card = document.getElementById("resultCard");
+    card.classList.add("visible");
+    card.classList.add("slide");
+  }
+
+  document.getElementById("restartBtn").addEventListener("click", function () {
+    answers = [];
+    currentStep = 0;
+    document.getElementById("resultCard").classList.remove("visible");
+    document.getElementById("resultCard").classList.remove("slide");
+    renderQuestion(0);
+  });
+
+  // Init
+  renderQuestion(0);
+
+}());
+</script>
+
+</body>
+</html>
